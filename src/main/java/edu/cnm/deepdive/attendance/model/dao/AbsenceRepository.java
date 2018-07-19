@@ -9,4 +9,5 @@ public interface AbsenceRepository extends CrudRepository<Absence, Long> {
 
 
   Optional<Absence> findByStudentAndId(Student student, long id);
+
 }

@@ -10,6 +10,7 @@ import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -45,40 +46,26 @@ public class StudentController {
   }
 
   @GetMapping("{studentId}")
-  public Student get(@PathVariable("studentId") long studentId) {
-    return studentRepository.findById(studentId).get(); // TODO EXPLAIN THIS!
+  public Student get(@PathVariable("studentId") long id) {
+    return studentRepository.findById(id).get();
   }
 
   @PatchMapping(value = "{studentId}", consumes = MediaType.APPLICATION_JSON_VALUE)
   public Student patch(@PathVariable("studentId") long studentId, @RequestBody Student update) {
-    Student student = studentRepository.findById(studentId).get();
+    Student student = get(studentId);
     student.patch(update);
     return studentRepository.save(student);
   }
 
-
-  @PutMapping(value = "{absenceId}/excused",
-  consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public boolean setExcusedJson(@PathVariable("studentId") long studentId,
-      @PathVariable("absenceId") long absenceId, @RequestBody boolean excused) {
-    Absence absence = get(studentId, absenceId);
-    absence.setExcused(excused);
-    return absenceRepository.save(absence).isExcused();
-  }
-
-  @PutMapping(value = "{absenceId}/excused",
-      consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-  public boolean setExcusedText(@PathVariable("studentId") long studentId,
-      @PathVariable("absenceId") long absenceId, @RequestBody String excused) {
-    Absence absence = get(studentId, absenceId);
-    absence.setExcused(excused);
-    return Boolean.toString(setExcusedJson(studentId, absenceId, Boolean.parseBoolean(excused)));
+  @DeleteMapping("{studentId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable("studentId") long studentId) {
+    studentRepository.delete(get(studentId));
   }
 
   @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Resource not found")
   @ExceptionHandler(NoSuchElementException.class)
   public void notFound() {
-
   }
 
 }
