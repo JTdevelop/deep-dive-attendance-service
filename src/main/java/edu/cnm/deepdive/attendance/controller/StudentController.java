@@ -10,6 +10,7 @@ import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @ExposesResourceFor(Student.class)
@@ -28,6 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class StudentController {
 
   private StudentRepository studentRepository;
+
+  @GetMapping(produces = MediaType.TEXT_HTML_VALUE)
+  public ModelAndView listHtml(Model model) {
+    model.addAttribute("students", studentRepository.findAllByOrderByLastNameAscFirstNameAsc());
+    return new ModelAndView("students", model.asMap());
+  }
 
   @Autowired
   public StudentController(StudentRepository studentRepository) {

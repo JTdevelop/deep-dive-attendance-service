@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML from REST Controller</title>
+  <style>
+    .excused {
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+<body>
+<div th:each="student : ${students}">
+  <h3 th:text="|${student.getFirstName()} ${student.getLastName()}|">Student</h3>
+  <ul>
+    <li th:each="absence : ${student.getAbsences()}">
+      <span th:classappend="${(absence.isExcused() ? ' excused' : '')}" th:text="${#calendars.format(absence.getStart(), 'yyyy-MM-dd')}">start</span>
+    </li>
+  </ul>
+</div>
+</body>
+</html>
